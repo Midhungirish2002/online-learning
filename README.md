@@ -2,6 +2,13 @@
 
 A comprehensive full-stack learning management system with **Django REST Framework** backend and **React** frontend.
 
+## 🌐 Live Demo
+
+**Frontend Demo**: [https://midhungirish2002.github.io/online-learning/](https://midhungirish2002.github.io/online-learning/)
+
+> **Note**: This is a static frontend demo hosted on GitHub Pages. Backend features require a deployed Django server.
+
+
 ## 🌟 Features
 
 ### User Management
