@@ -36,15 +36,26 @@ ALLOWED_HOSTS = [
     "LAPTOP-APS6FFAN",
 ]
 
+# ✅ CORS Configuration
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://localhost:5174",
+    "http://127.0.0.1:5174",
+]
+
 
 # Application definition
 INSTALLED_APPS = [
+    'daphne',  # ✅ ASGI server (must be first)
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',  # ✅ CORS
+    'channels',  # ✅ WebSocket support
 
     'rest_framework',
     'rest_framework.authtoken',
@@ -52,12 +63,14 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',                 # ✅ REQUIRED
     'rest_framework_simplejwt.token_blacklist', # ✅ REQUIRED
 
-    'learning',"seed"
+    'learning',
+    'seed'
 ]
 
 
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware', # ✅ CORS (Must be early)
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -85,6 +98,14 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'core.wsgi.application'
+ASGI_APPLICATION = 'core.asgi.application'
+
+# Channel Layers (in-memory for development)
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
 
 
 # Database

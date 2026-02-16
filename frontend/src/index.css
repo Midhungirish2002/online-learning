@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+/* Enable class-based dark mode */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+    html,
+    body,
+    #root {
+        height: 100%;
+    }
+
+    body {
+        background-color: var(--color-white);
+        color: var(--color-slate-900);
+        transition:
+            background-color 300ms,
+            color 300ms;
+    }
+
+    .dark body {
+        background-color: var(--color-slate-950);
+        color: white;
+    }
+}

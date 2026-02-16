@@ -195,3 +195,87 @@ class CourseRating(models.Model):
 
     class Meta:
         unique_together = ("student", "course")
+
+
+class Notification(models.Model):
+    """Real-time notification model for user alerts."""
+    NOTIFICATION_TYPES = [
+        ('QUIZ_GRADED', 'Quiz Graded'),
+        ('ENROLLED', 'Course Enrollment'),
+        ('NEW_COURSE', 'New Course Available'),
+        ('LESSON_COMPLETE', 'Lesson Completed'),
+        ('COURSE_COMPLETE', 'Course Completed'),
+    ]
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='notifications'
+    )
+    notification_type = models.CharField(max_length=50, choices=NOTIFICATION_TYPES)
+    message = models.TextField()
+    data = models.JSONField(default=dict, blank=True)
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.notification_type} - {self.user.username}"
+
+
+class Comment(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='comments')
+    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, null=True, blank=True, related_name='comments')
+    text = models.TextField()
+    parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='replies')
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"Comment by {self.user.username} on {self.course.title}"
+
+
+class Wishlist(models.Model):
+    """Student bookmarks courses to enroll later."""
+    student = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='wishlisted_courses'
+    )
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    added_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('student', 'course')
+        ordering = ['-added_at']
+
+    def __str__(self):
+        return f"{self.student.username} - {self.course.title}"
+
+
+class LectureNote(models.Model):
+    """Private notes students take during lessons."""
+    student = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='lecture_notes'
+    )
+    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['student', 'lesson']),
+        ]
+
+    def __str__(self):
+        return f"Note by {self.student.username} for {self.lesson.title}"

@@ -19,6 +19,19 @@ ENV/
 env.bak/
 venv.bak/
 
+# Node
+node_modules/
+package-lock.json
+
+# Debug and test scripts
+debug_*.py
+debug_*.html
+debug_*.txt
+test_*.py
+check_*.py
+find_*.py
+*_output.txt
+
 # IDEs
 .vscode/
 .idea/
